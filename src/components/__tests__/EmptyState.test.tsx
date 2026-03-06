@@ -1,13 +1,22 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { EmptyState } from '../EmptyState';
 
 describe('EmptyState', () => {
-  it('renders empty state message', () => {
+  it('renders empty state message without filters', () => {
     render(<EmptyState />);
     
-    expect(screen.getByText('No tasks yet')).toBeInTheDocument();
-    expect(screen.getByText(/Create your first task/i)).toBeInTheDocument();
+    expect(screen.getByText('Nenhuma tarefa ainda')).toBeInTheDocument();
+    expect(screen.getByText(/Crie sua primeira tarefa/i)).toBeInTheDocument();
+  });
+
+  it('renders empty state message with filters', () => {
+    const mockClearFilters = vi.fn();
+    render(<EmptyState hasFilters={true} onClearFilters={mockClearFilters} />);
+    
+    expect(screen.getByText('Nenhuma tarefa encontrada')).toBeInTheDocument();
+    expect(screen.getByText(/Nenhuma tarefa corresponde aos filtros/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /limpar filtros/i })).toBeInTheDocument();
   });
 
   it('has proper accessibility attributes', () => {

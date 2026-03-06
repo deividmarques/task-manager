@@ -1,19 +1,42 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Task } from './types/task';
 import { useTasks } from './hooks/useTasks';
 import { useToast } from './hooks/useToast';
+import { useFilters } from './hooks/useFilters';
 import { TaskList } from './components/TaskList';
 import { TaskForm } from './components/TaskForm';
 import { ConfirmDialog } from './components/ConfirmDialog';
+import { FilterBar } from './components/filters/FilterBar';
 import './App.css';
 
 function App() {
   const { tasks, error: storageError, createTask, updateTask, deleteTask, toggleTaskStatus } = useTasks();
   const { toasts, showToast, dismissToast } = useToast();
+  const {
+    filterState,
+    setSearchText,
+    setStatusFilter,
+    setSortOption,
+    clearFilters,
+    hasActiveFilters,
+    filteredTasks,
+    taskCounts,
+  } = useFilters(tasks);
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+
+  // Announcement for filtered results
+  const resultsAnnouncementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (resultsAnnouncementRef.current) {
+      const count = filteredTasks.length;
+      resultsAnnouncementRef.current.textContent = 
+        count === 1 ? '1 tarefa encontrada' : `${count} tarefas encontradas`;
+    }
+  }, [filteredTasks.length]);
 
   const handleCreateTask = (data: { title: string; description: string }) => {
     const result = createTask(data);
@@ -96,12 +119,34 @@ function App() {
         )}
 
         {!isFormOpen && !editingTask && (
-          <TaskList
-            tasks={tasks}
-            onEdit={handleEdit}
-            onDelete={(taskId) => setDeletingTaskId(taskId)}
-            onToggleStatus={handleToggleStatus}
-          />
+          <>
+            <FilterBar
+              searchText={filterState.searchText}
+              statusFilter={filterState.statusFilter}
+              sortOption={filterState.sortOption}
+              onSearchChange={setSearchText}
+              onStatusFilterChange={setStatusFilter}
+              onSortChange={setSortOption}
+              onClearFilters={clearFilters}
+              hasActiveFilters={hasActiveFilters}
+              taskCounts={taskCounts}
+            />
+            <div
+              ref={resultsAnnouncementRef}
+              className="sr-only"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            />
+            <TaskList
+              tasks={filteredTasks}
+              onEdit={handleEdit}
+              onDelete={(taskId) => setDeletingTaskId(taskId)}
+              onToggleStatus={handleToggleStatus}
+              hasFilters={hasActiveFilters}
+              onClearFilters={clearFilters}
+            />
+          </>
         )}
       </main>
 

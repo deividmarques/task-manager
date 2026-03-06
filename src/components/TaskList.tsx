@@ -7,6 +7,8 @@ export interface TaskListProps {
   onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
   onToggleStatus: (taskId: string) => void;
+  hasFilters?: boolean;
+  onClearFilters?: () => void;
 }
 
 export function TaskList({
@@ -14,19 +16,17 @@ export function TaskList({
   onEdit,
   onDelete,
   onToggleStatus,
+  hasFilters = false,
+  onClearFilters,
 }: TaskListProps) {
   if (tasks.length === 0) {
-    return <EmptyState />;
+    return <EmptyState hasFilters={hasFilters} onClearFilters={onClearFilters} />;
   }
 
-  // Sort tasks by createdAt (most recent first)
-  const sortedTasks = [...tasks].sort((a, b) => {
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
-
+  // Tasks are already sorted by the filter hook, no need to sort again
   return (
     <div className="task-list" role="list">
-      {sortedTasks.map((task) => (
+      {tasks.map((task) => (
         <div key={task.id} role="listitem">
           <TaskItem
             task={task}
