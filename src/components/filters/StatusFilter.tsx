@@ -19,8 +19,8 @@ export function StatusFilter({ value, onChange }: StatusFilterProps) {
   useEffect(() => {
     // Announce filter change to screen readers
     if (announcementRef.current) {
-      const selectedLabel =
-        STATUS_OPTIONS.find((opt) => opt.value === value)?.label || '';
+      const selectedOption = STATUS_OPTIONS.find((opt) => opt.value === value);
+      const selectedLabel = selectedOption?.label || '';
       announcementRef.current.textContent = `Filtro alterado para: ${selectedLabel}`;
     }
   }, [value]);
@@ -41,8 +41,21 @@ export function StatusFilter({ value, onChange }: StatusFilterProps) {
       return;
     }
 
-    buttonRefs.current[newIndex]?.focus();
-    onChange(STATUS_OPTIONS[newIndex].value);
+    // Validate index bounds before accessing array
+    if (newIndex >= 0 && newIndex < buttonRefs.current.length) {
+      // eslint-disable-next-line security/detect-object-injection -- newIndex is validated and bounded
+      const button = buttonRefs.current[newIndex];
+      button?.focus();
+    }
+
+    // Validate index bounds before accessing STATUS_OPTIONS
+    if (newIndex >= 0 && newIndex < STATUS_OPTIONS.length) {
+      // eslint-disable-next-line security/detect-object-injection -- newIndex is validated and bounded
+      const selectedOption = STATUS_OPTIONS[newIndex];
+      if (selectedOption) {
+        onChange(selectedOption.value);
+      }
+    }
   };
 
   return (
@@ -52,7 +65,11 @@ export function StatusFilter({ value, onChange }: StatusFilterProps) {
           <button
             key={option.value}
             ref={(el) => {
-              buttonRefs.current[index] = el;
+              // Validate index bounds before assignment
+              if (index >= 0 && index < STATUS_OPTIONS.length) {
+                // eslint-disable-next-line security/detect-object-injection -- index from map is safe
+                buttonRefs.current[index] = el;
+              }
             }}
             type="button"
             className={`status-filter__button ${

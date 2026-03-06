@@ -42,7 +42,16 @@ export function ConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="dialog-overlay" onClick={onCancel}>
+    <div
+      className="dialog-overlay"
+      onClick={onCancel}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          onCancel();
+        }
+      }}
+      role="presentation"
+    >
       <div
         ref={dialogRef}
         className="dialog"
@@ -50,7 +59,6 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby="dialog-title"
         aria-describedby="dialog-message"
-        onClick={(e) => e.stopPropagation()}
       >
         <h2 id="dialog-title" className="dialog-title">
           {title}
