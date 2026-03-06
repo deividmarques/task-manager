@@ -18,7 +18,7 @@ Execute os comandos abaixo no terminal (substitua `seu-usuario` pelo seu usernam
 
 ```bash
 # Adicionar remote origin
-git remote add origin https://github.com/seu-usuario/task-manager.git
+git remote add origin https://github.com/deividmarques/task-manager.git
 
 # Verificar se foi adicionado corretamente
 git remote -v
@@ -32,7 +32,7 @@ git push -u origin main
 
 ## Passo 3: Verificar no GitHub
 
-1. Acesse https://github.com/seu-usuario/task-manager
+1. Acesse https://github.com/deividmarques/task-manager
 2. Verifique se todos os arquivos foram enviados
 3. O README.md deve aparecer automaticamente na página inicial
 
@@ -155,7 +155,7 @@ Após publicar no GitHub, você pode:
 ### Erro: "remote origin already exists"
 ```bash
 git remote remove origin
-git remote add origin https://github.com/seu-usuario/task-manager.git
+git remote add origin https://github.com/deividmarques/task-manager.git
 ```
 
 ### Erro: "failed to push some refs"
