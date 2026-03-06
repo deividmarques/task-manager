@@ -15,7 +15,8 @@
     "coverage": "vitest run --coverage",
     "validate": "npm run lint && npm run test && npm run build",
     "pr": "bash scripts/create-pr.sh",
-    "pr:custom": "bash scripts/create-pr.sh --"
+    "pr:custom": "bash scripts/create-pr.sh --",
+    "pr:check": "bash scripts/quick-pr-check.sh"
   },
   "dependencies": {
     "react": "^19.2.0",

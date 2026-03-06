@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Auto PR Review",
+  "description": "Automatically analyzes PR changes before push, providing immediate feedback on code quality, security, and accessibility",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Check if there's an open PR in this repository. If there is:\n\n1. Run validation checks: 'npm run lint', 'npm run test', 'npm run build'\n2. If all checks pass, analyze the PR:\n   - Use 'gh pr view --json files,number,title' to get PR details\n   - Read changed files from the local workspace (not GitHub API)\n   - Focus on new/modified code in src/ directory\n   - Check for:\n     * Security issues (injection, unsafe operations)\n     * Accessibility violations (WCAG 2.2 AA)\n     * Code quality (complexity, duplication)\n     * Missing tests for new features\n     * Performance concerns\n3. Provide a concise summary:\n   - ✅ What's good\n   - ⚠️ What needs attention (if any)\n   - 📊 Validation results (lint/test/build)\n4. If there are critical issues, suggest fixes\n5. If everything looks good, confirm the PR is ready to merge\n\nKeep the feedback brief and actionable. Only run this if there's an active PR."
+  }
+}

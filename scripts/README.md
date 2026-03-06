@@ -1,5 +1,68 @@
 # Scripts do Projeto
 
+## quick-pr-check.sh
+
+Script rápido para validar PR antes de push ou merge.
+
+### O que faz
+
+1. ✅ Verifica se há uma PR aberta
+2. 🧪 Roda validações (lint, test, build)
+3. 📊 Mostra resumo da PR
+4. 🔍 Faz scan rápido do código:
+   - Detecta `console.log` (deve ser removido)
+   - Conta TODOs/FIXMEs
+   - Verifica se há testes novos
+
+### Uso
+
+```bash
+npm run pr:check
+```
+
+### Quando usar
+
+- ✅ Antes de fazer push
+- ✅ Antes de solicitar review
+- ✅ Antes de fazer merge
+- ✅ Após fazer mudanças na PR
+
+### Exemplo de saída
+
+```
+🔍 Quick PR Check
+==================
+
+📋 Analyzing PR #1: feat: Add filters and search functionality
+
+🧪 Running validation checks...
+
+1️⃣ Linting...
+   ✅ Lint passed
+2️⃣ Testing...
+   ✅ Tests passed
+3️⃣ Building...
+   ✅ Build passed
+
+✅ All validation checks passed!
+
+📊 PR Summary:
+   • Files changed: 36
+   • Status: Ready for review
+
+🔍 Quick code scan...
+   ⚠️  Found console.log statements (consider removing for production)
+   ℹ️  Found 3 TODO/FIXME comments
+
+🎉 PR is ready for review!
+💡 Next steps:
+   • Review the changes: gh pr view --web
+   • Request reviews: gh pr edit --add-reviewer username
+   • Merge when approved: gh pr merge
+```
+
+---
+
 ## create-pr.sh
 
 Script para criar Pull Requests de forma flexível usando GitHub CLI.

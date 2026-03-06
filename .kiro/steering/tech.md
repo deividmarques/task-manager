@@ -73,6 +73,7 @@ npm run coverage     # Generate coverage report (50% threshold)
 npm run pr           # Create PR from current branch to main
 npm run pr develop   # Create PR from current branch to develop
 npm run pr:custom -- --base main --draft  # Custom PR with gh flags
+npm run pr:check     # Quick validation before push/merge
 ```
 
 ## Pre-commit Checklist
@@ -118,18 +119,21 @@ git push -u origin main
 
 ### Pull Request Automation
 
-The project includes automated PR creation via GitHub CLI:
+The project includes automated PR creation and validation:
 
 ```bash
-# PR from current branch to main (auto-generates title/description)
+# Create PR from current branch to main (auto-generates title/description)
 npm run pr
 
-# PR from current branch to specific branch
+# Create PR from current branch to specific branch
 npm run pr develop
 npm run pr staging
 
 # Custom PR with full control
 npm run pr:custom -- --base main --draft --reviewer username
+
+# Quick PR validation (before push/merge)
+npm run pr:check
 ```
 
-See `scripts/README.md` for detailed documentation.
+See `scripts/README.md` and `docs/PR_AUTOMATION.md` for detailed documentation.
