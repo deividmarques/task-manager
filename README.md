@@ -1,6 +1,10 @@
 # Task Manager
 
+[![Deploy](https://github.com/deividmarques/task-manager/actions/workflows/deploy.yml/badge.svg)](https://github.com/deividmarques/task-manager/actions/workflows/deploy.yml)
+
 Um aplicativo web moderno para gerenciamento de tarefas, desenvolvido com React, TypeScript e Vite. Focado em usabilidade, acessibilidade e interface responsiva.
+
+🌐 **Demo ao vivo**: https://deividmarques.github.io/task-manager/
 
 ## 🚀 Funcionalidades
 
