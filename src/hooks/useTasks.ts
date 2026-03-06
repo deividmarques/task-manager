@@ -24,11 +24,13 @@ export function useTasks(): UseTasksReturn {
   // Load tasks on mount
   useEffect(() => {
     const { tasks: loadedTasks, error: loadError } = loadTasks();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTasks(loadedTasks);
+    setLoading(false);
+
     if (loadError) {
       setError(loadError);
     }
-    setLoading(false);
 
     // Check if storage is available
     if (!isStorageAvailable()) {
@@ -36,11 +38,12 @@ export function useTasks(): UseTasksReturn {
     }
   }, []);
 
-  // Persist tasks whenever they change
+  // Persist tasks whenever they change (after initial load)
   useEffect(() => {
-    if (!loading && tasks.length >= 0) {
+    if (!loading) {
       const { error: saveError } = saveTasks(tasks);
       if (saveError) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setError(saveError);
       }
     }

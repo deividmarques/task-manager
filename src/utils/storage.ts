@@ -8,7 +8,7 @@ export function isStorageAvailable(): boolean {
     localStorage.setItem(test, test);
     localStorage.removeItem(test);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -70,7 +70,7 @@ export function loadTasks(): { tasks: Task[]; error?: string } {
     }
 
     return { tasks: validTasks };
-  } catch (e) {
+  } catch {
     return { tasks: [], error: 'Failed to load tasks' };
   }
 }

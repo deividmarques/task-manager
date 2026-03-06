@@ -396,8 +396,8 @@ A aplicação será construída com foco em:
 - [x] 17. Checkpoint - Validar aplicação completa
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 18. Configurar entry point e build
-  - [ ] 18.1 Configurar main.tsx e index.html
+- [x] 18. Configurar entry point e build
+  - [x] 18.1 Configurar main.tsx e index.html
     - Criar arquivo `src/main.tsx` com ReactDOM.render
     - Importar estilos globais
     - Configurar `index.html` com meta tags apropriadas
@@ -406,7 +406,7 @@ A aplicação será construída com foco em:
     - Configurar título da página
     - _Requirements: 7.2, 9.1_
 
-  - [ ] 18.2 Configurar build de produção
+  - [x] 18.2 Configurar build de produção
     - Verificar configuração do Vite
     - Testar build de produção
     - Verificar otimizações (minificação, tree-shaking)
@@ -426,7 +426,7 @@ A aplicação será construída com foco em:
     - Corrigir violações encontradas
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10_
 
-- [ ] 20. Checkpoint final - Validação completa
+- [-] 20. Checkpoint final - Validação completa
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

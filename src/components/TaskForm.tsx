@@ -9,16 +9,21 @@ export interface TaskFormProps {
 }
 
 export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
-  const [title, setTitle] = useState(task?.title || '');
-  const [description, setDescription] = useState(task?.description || '');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [errors, setErrors] = useState<TaskFormErrors>({});
 
+  // Initialize form with task data if editing
   useEffect(() => {
     if (task) {
       setTitle(task.title);
       setDescription(task.description);
+    } else {
+      setTitle('');
+      setDescription('');
     }
-  }, [task]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task?.id]); // Only re-run when task ID changes
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
