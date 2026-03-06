@@ -139,8 +139,8 @@ A aplicação será construída com foco em:
 - [x] 6. Checkpoint - Validar fundação
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 7. Implementar componente EmptyState
-  - [ ] 7.1 Criar componente EmptyState
+- [x] 7. Implementar componente EmptyState
+  - [x] 7.1 Criar componente EmptyState
     - Exibir mensagem amigável quando lista está vazia
     - Incluir ícone ou ilustração
     - Sugerir criação da primeira tarefa
@@ -153,8 +153,8 @@ A aplicação será construída com foco em:
     - Testar acessibilidade do componente
     - _Requirements: 2.2_
 
-- [ ] 8. Implementar componente ConfirmDialog
-  - [ ] 8.1 Criar componente ConfirmDialog
+- [x] 8. Implementar componente ConfirmDialog
+  - [x] 8.1 Criar componente ConfirmDialog
     - Implementar modal de confirmação acessível
     - Capturar foco quando aberto (focus trap)
     - Permitir confirmação via Enter e cancelamento via Escape
@@ -175,8 +175,8 @@ A aplicação será construída com foco em:
     - Testar acessibilidade (ARIA attributes)
     - _Requirements: 4.1, 9.2, 9.5_
 
-- [ ] 9. Implementar componente TaskForm
-  - [ ] 9.1 Criar componente TaskForm
+- [x] 9. Implementar componente TaskForm
+  - [x] 9.1 Criar componente TaskForm
     - Implementar formulário controlado com useState
     - Campos: título (input) e descrição (textarea)
     - Validação inline com exibição de erros
@@ -212,8 +212,8 @@ A aplicação será construída com foco em:
     - Testar acessibilidade (labels, aria-describedby)
     - _Requirements: 1.1, 1.3, 3.1, 3.4, 8.3, 9.6_
 
-- [ ] 10. Implementar componente TaskItem
-  - [ ] 10.1 Criar componente TaskItem
+- [x] 10. Implementar componente TaskItem
+  - [x] 10.1 Criar componente TaskItem
     - Exibir título, descrição, status e data de criação
     - Implementar checkbox para toggle de status
     - Botões de editar e excluir
@@ -247,8 +247,8 @@ A aplicação será construída com foco em:
     - Testar acessibilidade (ARIA, alt texts)
     - _Requirements: 2.3, 5.3, 5.4, 7.3, 9.2, 9.9, 9.10_
 
-- [ ] 11. Implementar componente TaskList
-  - [ ] 11.1 Criar componente TaskList
+- [x] 11. Implementar componente TaskList
+  - [x] 11.1 Criar componente TaskList
     - Renderizar lista de TaskItem ou EmptyState
     - Ordenar tarefas por createdAt (mais recentes primeiro)
     - Aplicar layout responsivo (coluna única em mobile, grid em desktop)
@@ -272,7 +272,7 @@ A aplicação será construída com foco em:
     - Testar ordem de tabulação
     - _Requirements: 2.1, 2.2, 2.4, 2.5, 9.8_
 
-- [ ] 12. Checkpoint - Validar componentes individuais
+- [-] 12. Checkpoint - Validar componentes individuais
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 13. Implementar componente App
