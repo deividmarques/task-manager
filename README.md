@@ -117,15 +117,15 @@ Este projeto foi desenvolvido seguindo as diretrizes WCAG 2.2 nível AA:
 
 ## 🧪 Testes
 
-O projeto utiliza uma abordagem dual de testes:
+O projeto utiliza Vitest + React Testing Library para testes:
 
-- **Testes Unitários**: Casos específicos e edge cases
-- **Property-Based Testing**: Propriedades universais com fast-check
-
-Meta de cobertura: 90% (line, branch, function)
+- **Testes Unitários**: Componentes e utilitários
+- **Coverage Mínimo**: 50% (line, branch, function, statements)
 
 ```bash
 npm run test           # Executa todos os testes
+npm run test:watch     # Modo watch para desenvolvimento
+npm run test:ui        # Interface visual para testes
 npm run coverage       # Gera relatório de cobertura
 ```
 

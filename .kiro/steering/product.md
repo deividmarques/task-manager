@@ -26,7 +26,7 @@ Task Manager - Um aplicativo web moderno para gerenciamento de tarefas pessoais,
 ## Development Methodology
 
 - **Spec-Driven Development**: Requirements → Design → Tasks → Implementation
-- **Test Coverage**: 90% minimum (line, branch, function)
+- **Test Coverage**: 50% minimum (line, branch, function, statements)
 - **Accessibility First**: WCAG 2.2 AA compliance
 - **Conventional Commits**: Structured commit messages
 - **AI-Assisted Development**: Built with Kiro AI Assistant

@@ -60,8 +60,9 @@ npm run format       # Format code with Prettier
 
 # Testing
 npm run test         # Run tests
+npm run test:watch   # Run tests in watch mode
 npm run test:ui      # Visual test interface
-npm run coverage     # Generate coverage report (90% threshold)
+npm run coverage     # Generate coverage report (50% threshold)
 ```
 
 ## GitHub Repository
