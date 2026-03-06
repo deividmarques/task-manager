@@ -7,7 +7,9 @@
     "type": "agentStop"
   },
   "then": {
-    "type": "askAgent",
-    "prompt": "Before committing any changes, always run 'npm run lint' and 'npm run test' to ensure the code passes all checks and won't break in GitHub Actions. Only proceed with git commit if both commands succeed."
-  }
+    "type": "runCommand",
+    "command": "npm run lint && npm run test"
+  },
+  "workspaceFolderName": "kiro",
+  "shortName": "pre-commit-validation"
 }
