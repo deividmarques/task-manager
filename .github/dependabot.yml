@@ -1,0 +1,62 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "deividmarques"
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    
+    # Group updates
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+    
+    # Ignore specific dependencies
+    ignore:
+      # Ignore major version updates for React (manual review preferred)
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      
+      # Ignore major version updates for TypeScript (breaking changes)
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+    
+    # Allow specific updates
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels:
+      - "github-actions"
+      - "automated"
+    commit-message:
+      prefix: "ci"
