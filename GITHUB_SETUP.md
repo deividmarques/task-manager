@@ -146,6 +146,7 @@ git commit -m "feat: adicionar filtro de tarefas por status"
 ```bash
 npm run lint    # Deve passar sem erros
 npm run test    # Todos os testes devem passar
+npm run build   # Build deve ser bem-sucedido
 ```
 
 Isso garante qualidade do código e previne falhas no GitHub Actions.

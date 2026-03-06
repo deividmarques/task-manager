@@ -72,6 +72,7 @@ npm run coverage     # Generate coverage report (50% threshold)
 ```bash
 npm run lint         # Must pass without errors
 npm run test         # All tests must pass
+npm run build        # Build must succeed
 ```
 
 This ensures code quality and prevents CI/CD failures in GitHub Actions.
