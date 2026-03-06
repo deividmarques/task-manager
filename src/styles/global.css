@@ -357,6 +357,10 @@ body {
   color: white;
 }
 
+.task-checkbox:focus-within + .task-checkbox-custom {
+  border-color: var(--color-text-secondary);
+}
+
 .task-title {
   flex: 1;
   font-size: var(--font-size-lg);
