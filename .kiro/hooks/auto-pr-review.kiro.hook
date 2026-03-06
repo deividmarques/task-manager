@@ -1,7 +1,7 @@
 {
-  "enabled": true,
-  "name": "Auto PR Review",
-  "description": "Automatically analyzes PR changes before push, providing immediate feedback on code quality, security, and accessibility",
+  "enabled": false,
+  "name": "Auto PR Review (DISABLED)",
+  "description": "TEMPORARIAMENTE DESABILITADO - Automatically analyzes PR changes before push, providing immediate feedback on code quality, security, and accessibility",
   "version": "1",
   "when": {
     "type": "agentStop"

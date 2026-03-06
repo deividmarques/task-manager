@@ -40,8 +40,8 @@ jobs:
             echo "lint_status=❌ Failed" >> $GITHUB_OUTPUT
           fi
           
-          # Test
-          if npm run test; then
+          # Test with coverage
+          if npm run coverage; then
             echo "test_status=✅ Passed" >> $GITHUB_OUTPUT
           else
             echo "test_status=❌ Failed" >> $GITHUB_OUTPUT
@@ -52,6 +52,25 @@ jobs:
             echo "build_status=✅ Passed" >> $GITHUB_OUTPUT
           else
             echo "build_status=❌ Failed" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+        
+      - name: Extract coverage summary
+        id: coverage
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+            STATEMENTS=$(jq '.total.statements.pct' coverage/coverage-summary.json)
+            FUNCTIONS=$(jq '.total.functions.pct' coverage/coverage-summary.json)
+            BRANCHES=$(jq '.total.branches.pct' coverage/coverage-summary.json)
+            
+            echo "lines=$LINES" >> $GITHUB_OUTPUT
+            echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+            echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+            echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+            echo "has_coverage=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_coverage=false" >> $GITHUB_OUTPUT
           fi
         continue-on-error: true
         
@@ -94,6 +113,13 @@ jobs:
             const todos = '${{ steps.analyze.outputs.todos }}';
             const testFiles = '${{ steps.analyze.outputs.test_files }}';
             
+            // Coverage data
+            const hasCoverage = '${{ steps.coverage.outputs.has_coverage }}' === 'true';
+            const coverageLines = '${{ steps.coverage.outputs.lines }}';
+            const coverageStatements = '${{ steps.coverage.outputs.statements }}';
+            const coverageFunctions = '${{ steps.coverage.outputs.functions }}';
+            const coverageBranches = '${{ steps.coverage.outputs.branches }}';
+            
             let warnings = [];
             let suggestions = [];
             
@@ -109,7 +135,42 @@ jobs:
               suggestions.push('💡 Consider adding tests for new code');
             }
             
+            // Coverage warnings
+            if (hasCoverage) {
+              const minCoverage = 50;
+              if (parseFloat(coverageLines) < minCoverage) {
+                warnings.push(`⚠️ Line coverage (${coverageLines}%) is below threshold (${minCoverage}%)`);
+              }
+              if (parseFloat(coverageBranches) < minCoverage) {
+                warnings.push(`⚠️ Branch coverage (${coverageBranches}%) is below threshold (${minCoverage}%)`);
+              }
+            }
+            
             const allPassed = lintStatus.includes('✅') && testStatus.includes('✅') && buildStatus.includes('✅');
+            
+            // Build coverage section
+            let coverageSection = '';
+            if (hasCoverage) {
+              const getCoverageEmoji = (pct) => {
+                const value = parseFloat(pct);
+                if (value >= 80) return '🟢';
+                if (value >= 50) return '🟡';
+                return '🔴';
+              };
+              
+              coverageSection = `
+            ### 📊 Test Coverage
+            
+            | Metric | Coverage | Status |
+            |--------|----------|--------|
+            | **Lines** | ${coverageLines}% | ${getCoverageEmoji(coverageLines)} |
+            | **Statements** | ${coverageStatements}% | ${getCoverageEmoji(coverageStatements)} |
+            | **Functions** | ${coverageFunctions}% | ${getCoverageEmoji(coverageFunctions)} |
+            | **Branches** | ${coverageBranches}% | ${getCoverageEmoji(coverageBranches)} |
+            
+            *Threshold: 50% minimum • 🟢 ≥80% • 🟡 ≥50% • 🔴 <50%*
+            `;
+            }
             
             const comment = `## 🤖 AI Code Review
             
@@ -120,7 +181,7 @@ jobs:
             | **Lint** | ${lintStatus} |
             | **Tests** | ${testStatus} |
             | **Build** | ${buildStatus} |
-            
+            ${coverageSection}
             ### 📈 Code Analysis
             
             - **Files changed**: ${fileCount} TypeScript/JavaScript files
