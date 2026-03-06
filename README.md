@@ -1,73 +1,165 @@
-# React + TypeScript + Vite
+# Task Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Um aplicativo web moderno para gerenciamento de tarefas, desenvolvido com React, TypeScript e Vite. Focado em usabilidade, acessibilidade e interface responsiva.
 
-Currently, two official plugins are available:
+## 🚀 Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ✅ **CRUD Completo**: Criar, visualizar, editar e excluir tarefas
+- 💾 **Persistência Automática**: Dados salvos automaticamente no LocalStorage
+- 📱 **Interface Responsiva**: Design mobile-first com suporte a desktop
+- ♿ **Acessibilidade WCAG 2.2 AA**: Navegação por teclado, leitores de tela, contraste adequado
+- 🎨 **UI Moderna**: Interface limpa e intuitiva
+- 🔔 **Notificações**: Feedback visual para todas as ações
+- ✓ **Status de Tarefas**: Marcar tarefas como pendentes ou concluídas
+- 🔍 **Validação**: Validação de formulários com mensagens de erro claras
 
-## React Compiler
+## 🛠️ Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - Biblioteca UI
+- **TypeScript** - Tipagem estática
+- **Vite** - Build tool e dev server
+- **CSS3** - Estilização (sem frameworks)
+- **LocalStorage API** - Persistência de dados
+- **ESLint** - Linting
+- **Prettier** - Formatação de código
+- **Vitest** - Framework de testes
+- **React Testing Library** - Testes de componentes
+- **fast-check** - Property-based testing
 
-## Expanding the ESLint configuration
+## 📋 Pré-requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 18+ 
+- npm ou yarn
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🔧 Instalação
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/task-manager.git
+cd task-manager
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Instale as dependências:
+```bash
+npm install
 ```
+
+3. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
+
+4. Acesse http://localhost:5173 no navegador
+
+## 📦 Scripts Disponíveis
+
+```bash
+# Desenvolvimento
+npm run dev          # Inicia servidor de desenvolvimento
+
+# Build
+npm run build        # Cria build de produção
+npm run preview      # Preview do build de produção
+
+# Qualidade de Código
+npm run lint         # Executa ESLint
+npm run format       # Formata código com Prettier
+
+# Testes
+npm run test         # Executa testes
+npm run test:ui      # Interface visual para testes
+npm run coverage     # Relatório de cobertura de testes
+```
+
+## 🏗️ Estrutura do Projeto
+
+```
+src/
+├── components/          # Componentes React
+│   ├── App.tsx         # Componente principal
+│   ├── TaskList.tsx    # Lista de tarefas
+│   ├── TaskItem.tsx    # Item individual de tarefa
+│   ├── TaskForm.tsx    # Formulário criar/editar
+│   ├── ConfirmDialog.tsx   # Diálogo de confirmação
+│   ├── EmptyState.tsx      # Estado vazio
+│   ├── ErrorBoundary.tsx   # Tratamento de erros
+│   └── LiveRegion.tsx      # Anúncios para leitores de tela
+├── hooks/              # Custom React Hooks
+│   ├── useTasks.ts     # Gerenciamento de tarefas
+│   ├── useLocalStorage.ts  # Persistência
+│   └── useToast.ts     # Notificações
+├── types/              # Definições TypeScript
+│   └── task.ts         # Tipos de Task
+├── utils/              # Utilitários
+│   ├── validation.ts   # Validação de dados
+│   └── storage.ts      # Operações de storage
+├── styles/             # Estilos CSS
+│   └── global.css      # Estilos globais
+└── main.tsx            # Entry point
+```
+
+## ♿ Acessibilidade
+
+Este projeto foi desenvolvido seguindo as diretrizes WCAG 2.2 nível AA:
+
+- ✓ Contraste de cores adequado (4.5:1 para texto, 3:1 para componentes)
+- ✓ Navegação completa por teclado
+- ✓ Suporte a leitores de tela com ARIA
+- ✓ Touch targets mínimos de 44x44px
+- ✓ Indicadores de foco visíveis
+- ✓ Labels acessíveis em todos os controles
+- ✓ Live regions para anúncios dinâmicos
+- ✓ Ordem de tabulação lógica
+
+## 🧪 Testes
+
+O projeto utiliza uma abordagem dual de testes:
+
+- **Testes Unitários**: Casos específicos e edge cases
+- **Property-Based Testing**: Propriedades universais com fast-check
+
+Meta de cobertura: 90% (line, branch, function)
+
+```bash
+npm run test           # Executa todos os testes
+npm run coverage       # Gera relatório de cobertura
+```
+
+## 📱 Responsividade
+
+- **Mobile**: 320px - 767px (layout de coluna única)
+- **Desktop**: 768px+ (layout em grid)
+- Design mobile-first
+- Suporte a touch e mouse
+
+## 🔒 Tratamento de Erros
+
+- Error Boundary para erros de renderização
+- Validação de entrada de dados
+- Tratamento de falhas de LocalStorage
+- Recuperação de dados corrompidos
+- Mensagens de erro claras e acionáveis
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Por favor:
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👤 Autor
+
+Desenvolvido com ❤️ usando Kiro AI Assistant
+
+## 🙏 Agradecimentos
+
+- Desenvolvido seguindo metodologia Spec-Driven Development
+- Implementado com foco em acessibilidade e boas práticas
+- Testado com property-based testing para maior confiabilidade
