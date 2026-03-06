@@ -1,4 +1,4 @@
-import { TaskFormData, TaskFormErrors } from '../types/task';
+import type { TaskFormData, TaskFormErrors } from '../types/task';
 
 export function validateTitle(title: string): string | null {
   const trimmed = title.trim();

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Task, TaskFormData, TaskStatus } from '../types/task';
+import type { Task, TaskFormData, TaskStatus } from '../types/task';
 import { validateTaskFormData } from '../utils/validation';
 import { loadTasks, saveTasks, isStorageAvailable } from '../utils/storage';
 

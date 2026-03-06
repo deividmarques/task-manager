@@ -22,8 +22,8 @@ A aplicação será construída com foco em:
   - Configurar coverage reporting (mínimo 90%)
   - _Requirements: Todos (setup necessário)_
 
-- [ ] 2. Implementar tipos e modelos de dados
-  - [ ] 2.1 Criar definições de tipos TypeScript
+- [x] 2. Implementar tipos e modelos de dados
+  - [x] 2.1 Criar definições de tipos TypeScript
     - Definir interface `Task` com id, title, description, status, createdAt, updatedAt
     - Definir type `TaskStatus` como 'pending' | 'completed'
     - Definir interface `TaskFormData` para dados do formulário
@@ -35,8 +35,8 @@ A aplicação será construída com foco em:
     - **Property 22: Storage round-trip integrity**
     - **Validates: Requirements 6.2, 6.4**
 
-- [ ] 3. Implementar utilitários de validação
-  - [ ] 3.1 Criar funções de validação
+- [x] 3. Implementar utilitários de validação
+  - [x] 3.1 Criar funções de validação
     - Implementar `validateTitle(title: string)` - trim, não vazio, máx 200 chars
     - Implementar `validateDescription(description: string)` - trim, máx 1000 chars
     - Implementar `validateTaskFormData(data: TaskFormData)` - retorna erros
@@ -55,8 +55,8 @@ A aplicação será construída com foco em:
     - Testar descrições válidas e inválidas
     - _Requirements: 1.3, 3.4, 8.3_
 
-- [ ] 4. Implementar utilitários de storage
-  - [ ] 4.1 Criar funções de LocalStorage
+- [x] 4. Implementar utilitários de storage
+  - [x] 4.1 Criar funções de LocalStorage
     - Implementar `saveTasks(tasks: Task[])` com tratamento de erros
     - Implementar `loadTasks()` com validação e parsing
     - Implementar `isStorageAvailable()` para detectar disponibilidade
@@ -75,8 +75,8 @@ A aplicação será construída com foco em:
     - Testar dados corrompidos
     - _Requirements: 6.1, 6.2, 6.3, 6.5_
 
-- [ ] 5. Implementar custom hooks
-  - [ ] 5.1 Criar hook useLocalStorage
+- [x] 5. Implementar custom hooks
+  - [x] 5.1 Criar hook useLocalStorage
     - Implementar hook genérico `useLocalStorage<T>(key, initialValue)`
     - Retornar [value, setValue, error]
     - Sincronizar com mudanças de storage
@@ -90,7 +90,7 @@ A aplicação será construída com foco em:
     - Testar tratamento de erros
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [ ] 5.3 Criar hook useToast
+  - [x] 5.3 Criar hook useToast
     - Implementar gerenciamento de notificações temporárias
     - Retornar { toasts, showToast, dismissToast }
     - Implementar auto-dismiss após 3 segundos
@@ -104,7 +104,7 @@ A aplicação será construída com foco em:
     - Testar múltiplos toasts simultâneos
     - _Requirements: 8.1, 8.2_
 
-  - [ ] 5.5 Criar hook useTasks
+  - [x] 5.5 Criar hook useTasks
     - Implementar todas as operações CRUD de tarefas
     - Usar useLocalStorage internamente
     - Implementar createTask, updateTask, deleteTask, toggleTaskStatus
@@ -136,10 +136,10 @@ A aplicação será construída com foco em:
     - Testar geração de IDs únicos
     - _Requirements: 1.2, 1.4, 1.5, 3.2, 4.2, 5.2_
 
-- [ ] 6. Checkpoint - Validar fundação
+- [x] 6. Checkpoint - Validar fundação
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Implementar componente EmptyState
+- [-] 7. Implementar componente EmptyState
   - [ ] 7.1 Criar componente EmptyState
     - Exibir mensagem amigável quando lista está vazia
     - Incluir ícone ou ilustração
