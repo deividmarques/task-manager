@@ -63,6 +63,11 @@ npm run test         # Run tests
 npm run test:watch   # Run tests in watch mode
 npm run test:ui      # Visual test interface
 npm run coverage     # Generate coverage report (50% threshold)
+
+# Pull Requests (requires GitHub CLI)
+npm run pr           # Create PR from current branch to main
+npm run pr develop   # Create PR from current branch to develop
+npm run pr:custom -- --base main --draft  # Custom PR with gh flags
 ```
 
 ## Pre-commit Checklist
@@ -95,3 +100,20 @@ git push -u origin main
 - All commits follow conventional commits format
 - 22 commits documenting the complete implementation
 
+### Pull Request Automation
+
+The project includes automated PR creation via GitHub CLI:
+
+```bash
+# PR from current branch to main (auto-generates title/description)
+npm run pr
+
+# PR from current branch to specific branch
+npm run pr develop
+npm run pr staging
+
+# Custom PR with full control
+npm run pr:custom -- --base main --draft --reviewer username
+```
+
+See `scripts/README.md` for detailed documentation.

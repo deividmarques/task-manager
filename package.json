@@ -11,7 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "pr": "bash scripts/create-pr.sh",
+    "pr:custom": "bash scripts/create-pr.sh --"
   },
   "dependencies": {
     "react": "^19.2.0",
