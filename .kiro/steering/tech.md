@@ -65,6 +65,17 @@ npm run test:ui      # Visual test interface
 npm run coverage     # Generate coverage report (50% threshold)
 ```
 
+## Pre-commit Checklist
+
+**IMPORTANT**: Always run these commands before committing:
+
+```bash
+npm run lint         # Must pass without errors
+npm run test         # All tests must pass
+```
+
+This ensures code quality and prevents CI/CD failures in GitHub Actions.
+
 ## GitHub Repository
 
 **Repository**: https://github.com/seu-usuario/task-manager

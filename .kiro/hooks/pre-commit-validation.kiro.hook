@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Pre-commit Validation",
+  "description": "Runs lint and tests before allowing commits to ensure code quality and prevent CI/CD failures",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Before committing any changes, always run 'npm run lint' and 'npm run test' to ensure the code passes all checks and won't break in GitHub Actions. Only proceed with git commit if both commands succeed."
+  }
+}

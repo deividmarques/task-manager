@@ -139,6 +139,17 @@ Exemplo:
 git commit -m "feat: adicionar filtro de tarefas por status"
 ```
 
+### Checklist Antes de Commitar
+
+**IMPORTANTE**: Sempre execute antes de fazer commit:
+
+```bash
+npm run lint    # Deve passar sem erros
+npm run test    # Todos os testes devem passar
+```
+
+Isso garante qualidade do código e previne falhas no GitHub Actions.
+
 ## Próximos Passos
 
 Após publicar no GitHub, você pode:
