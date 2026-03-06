@@ -36,6 +36,9 @@ The workspace supports Model Context Protocol (MCP) servers for extended capabil
 
 ### Development Tools
 - **ESLint** - Code linting
+  - `eslint-plugin-security` - Security vulnerability detection
+  - `eslint-plugin-sonarjs` - Code quality and complexity analysis
+  - `eslint-plugin-jsx-a11y` - Accessibility (WCAG 2.2 AA) validation
 - **Prettier** - Code formatting
 - **Vitest** - Testing framework
 - **React Testing Library** - Component testing
@@ -55,8 +58,10 @@ npm run build        # Create production build
 npm run preview      # Preview production build
 
 # Code Quality
-npm run lint         # Run ESLint
+npm run lint         # Run ESLint (security + quality + accessibility)
+npm run lint:security # Run security checks only
 npm run format       # Format code with Prettier
+npm run validate     # Run lint + test + build (use before commit)
 
 # Testing
 npm run test         # Run tests
@@ -75,12 +80,23 @@ npm run pr:custom -- --base main --draft  # Custom PR with gh flags
 **IMPORTANT**: Always run these commands before committing:
 
 ```bash
-npm run lint         # Must pass without errors
+npm run validate     # Runs lint + test + build (recommended)
+# or individually:
+npm run lint         # Must pass without errors (checks security, quality, accessibility)
 npm run test         # All tests must pass
 npm run build        # Build must succeed
 ```
 
-This ensures code quality and prevents CI/CD failures in GitHub Actions.
+This ensures code quality, security, and prevents CI/CD failures in GitHub Actions.
+
+### Local Code Validation
+
+The project includes automated local validation for:
+- **Security**: Detects vulnerabilities (injection, unsafe regex, etc.)
+- **Quality**: Analyzes code complexity and smells
+- **Accessibility**: Validates WCAG 2.2 AA compliance
+
+See `docs/CODE_VALIDATION.md` for detailed documentation.
 
 ## GitHub Repository
 
