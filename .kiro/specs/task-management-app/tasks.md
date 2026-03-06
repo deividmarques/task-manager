@@ -272,11 +272,11 @@ A aplicação será construída com foco em:
     - Testar ordem de tabulação
     - _Requirements: 2.1, 2.2, 2.4, 2.5, 9.8_
 
-- [-] 12. Checkpoint - Validar componentes individuais
+- [x] 12. Checkpoint - Validar componentes individuais
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 13. Implementar componente App
-  - [ ] 13.1 Criar componente App principal
+- [x] 13. Implementar componente App
+  - [x] 13.1 Criar componente App principal
     - Usar hook useTasks para gerenciar estado
     - Usar hook useToast para notificações
     - Gerenciar estado de UI (formulário aberto/fechado, tarefa em edição, diálogo de confirmação)
@@ -313,8 +313,8 @@ A aplicação será construída com foco em:
     - Testar warning de LocalStorage indisponível
     - _Requirements: 1.1, 1.4, 3.3, 3.5, 4.1, 4.3, 6.3, 8.1, 8.2_
 
-- [ ] 14. Implementar estilos globais e responsivos
-  - [ ] 14.1 Criar estilos CSS
+- [x] 14. Implementar estilos globais e responsivos
+  - [x] 14.1 Criar estilos CSS
     - Implementar CSS reset/normalize
     - Definir variáveis CSS para cores, espaçamentos, fontes
     - Garantir contraste mínimo 4.5:1 para texto normal
@@ -349,8 +349,8 @@ A aplicação será construída com foco em:
     - Testar tamanhos de touch targets
     - _Requirements: 7.1, 7.2, 7.3, 9.3, 9.4_
 
-- [ ] 15. Implementar acessibilidade avançada
-  - [ ] 15.1 Adicionar live regions para anúncios
+- [x] 15. Implementar acessibilidade avançada
+  - [x] 15.1 Adicionar live regions para anúncios
     - Criar componente LiveRegion com aria-live="polite"
     - Anunciar criação de tarefas
     - Anunciar atualização de tarefas
@@ -369,8 +369,8 @@ A aplicação será construída com foco em:
     - Testar focus trap em diálogos
     - _Requirements: 9.7_
 
-- [ ] 16. Implementar tratamento de erros robusto
-  - [ ] 16.1 Adicionar Error Boundary
+- [x] 16. Implementar tratamento de erros robusto
+  - [x] 16.1 Adicionar Error Boundary
     - Criar componente ErrorBoundary
     - Capturar erros de renderização
     - Exibir fallback UI amigável
@@ -378,7 +378,7 @@ A aplicação será construída com foco em:
     - Logar erros no console
     - _Requirements: 8.2_
 
-  - [ ] 16.2 Adicionar tratamento de erros de storage
+  - [x] 16.2 Adicionar tratamento de erros de storage
     - Detectar LocalStorage indisponível na inicialização
     - Exibir warning persistente se indisponível
     - Implementar modo in-memory fallback
@@ -393,7 +393,7 @@ A aplicação será construída com foco em:
     - Testar dados corrompidos
     - _Requirements: 6.3, 6.5, 8.2_
 
-- [ ] 17. Checkpoint - Validar aplicação completa
+- [x] 17. Checkpoint - Validar aplicação completa
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 18. Configurar entry point e build
