@@ -1,0 +1,216 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  code-review:
+    name: AI-Powered Code Review
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run validation
+        id: validation
+        run: |
+          echo "Running validation checks..."
+          
+          # Lint
+          if npm run lint; then
+            echo "lint_status=✅ Passed" >> $GITHUB_OUTPUT
+          else
+            echo "lint_status=❌ Failed" >> $GITHUB_OUTPUT
+          fi
+          
+          # Test with coverage
+          if npm run coverage; then
+            echo "test_status=✅ Passed" >> $GITHUB_OUTPUT
+          else
+            echo "test_status=❌ Failed" >> $GITHUB_OUTPUT
+          fi
+          
+          # Build
+          if npm run build; then
+            echo "build_status=✅ Passed" >> $GITHUB_OUTPUT
+          else
+            echo "build_status=❌ Failed" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+        
+      - name: Extract coverage summary
+        id: coverage
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+            STATEMENTS=$(jq '.total.statements.pct' coverage/coverage-summary.json)
+            FUNCTIONS=$(jq '.total.functions.pct' coverage/coverage-summary.json)
+            BRANCHES=$(jq '.total.branches.pct' coverage/coverage-summary.json)
+            
+            echo "lines=$LINES" >> $GITHUB_OUTPUT
+            echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+            echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+            echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+            echo "has_coverage=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_coverage=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+        
+      - name: Analyze changed files
+        id: analyze
+        run: |
+          echo "Analyzing changed files..."
+          
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(ts|tsx|js|jsx)$' || echo "")
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Count files
+          FILE_COUNT=$(echo "$CHANGED_FILES" | grep -c . || echo "0")
+          echo "file_count=$FILE_COUNT" >> $GITHUB_OUTPUT
+          
+          # Check for console.log
+          CONSOLE_LOGS=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "console\.log" || echo "0")
+          echo "console_logs=$CONSOLE_LOGS" >> $GITHUB_OUTPUT
+          
+          # Check for TODOs
+          TODOS=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "TODO\|FIXME" || echo "0")
+          echo "todos=$TODOS" >> $GITHUB_OUTPUT
+          
+          # Check for test files
+          TEST_FILES=$(echo "$CHANGED_FILES" | grep -c "\.test\." || echo "0")
+          echo "test_files=$TEST_FILES" >> $GITHUB_OUTPUT
+          
+      - name: Post review comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const lintStatus = '${{ steps.validation.outputs.lint_status }}';
+            const testStatus = '${{ steps.validation.outputs.test_status }}';
+            const buildStatus = '${{ steps.validation.outputs.build_status }}';
+            const fileCount = '${{ steps.analyze.outputs.file_count }}';
+            const consoleLogs = '${{ steps.analyze.outputs.console_logs }}';
+            const todos = '${{ steps.analyze.outputs.todos }}';
+            const testFiles = '${{ steps.analyze.outputs.test_files }}';
+            
+            // Coverage data
+            const hasCoverage = '${{ steps.coverage.outputs.has_coverage }}' === 'true';
+            const coverageLines = '${{ steps.coverage.outputs.lines }}';
+            const coverageStatements = '${{ steps.coverage.outputs.statements }}';
+            const coverageFunctions = '${{ steps.coverage.outputs.functions }}';
+            const coverageBranches = '${{ steps.coverage.outputs.branches }}';
+            
+            let warnings = [];
+            let suggestions = [];
+            
+            if (consoleLogs > 0) {
+              warnings.push(`⚠️ Found ${consoleLogs} console.log statement(s) - consider removing for production`);
+            }
+            
+            if (todos > 0) {
+              warnings.push(`ℹ️ Found ${todos} TODO/FIXME comment(s)`);
+            }
+            
+            if (testFiles === '0' && fileCount > 0) {
+              suggestions.push('💡 Consider adding tests for new code');
+            }
+            
+            // Coverage warnings
+            if (hasCoverage) {
+              const minCoverage = 50;
+              if (parseFloat(coverageLines) < minCoverage) {
+                warnings.push(`⚠️ Line coverage (${coverageLines}%) is below threshold (${minCoverage}%)`);
+              }
+              if (parseFloat(coverageBranches) < minCoverage) {
+                warnings.push(`⚠️ Branch coverage (${coverageBranches}%) is below threshold (${minCoverage}%)`);
+              }
+            }
+            
+            const allPassed = lintStatus.includes('✅') && testStatus.includes('✅') && buildStatus.includes('✅');
+            
+            // Build coverage section
+            let coverageSection = '';
+            if (hasCoverage) {
+              const getCoverageEmoji = (pct) => {
+                const value = parseFloat(pct);
+                if (value >= 80) return '🟢';
+                if (value >= 50) return '🟡';
+                return '🔴';
+              };
+              
+              coverageSection = `
+            ### 📊 Test Coverage
+            
+            | Metric | Coverage | Status |
+            |--------|----------|--------|
+            | **Lines** | ${coverageLines}% | ${getCoverageEmoji(coverageLines)} |
+            | **Statements** | ${coverageStatements}% | ${getCoverageEmoji(coverageStatements)} |
+            | **Functions** | ${coverageFunctions}% | ${getCoverageEmoji(coverageFunctions)} |
+            | **Branches** | ${coverageBranches}% | ${getCoverageEmoji(coverageBranches)} |
+            
+            *Threshold: 50% minimum • 🟢 ≥80% • 🟡 ≥50% • 🔴 <50%*
+            `;
+            }
+            
+            const comment = `## 🤖 AI Code Review
+            
+            ### 📊 Validation Results
+            
+            | Check | Status |
+            |-------|--------|
+            | **Lint** | ${lintStatus} |
+            | **Tests** | ${testStatus} |
+            | **Build** | ${buildStatus} |
+            ${coverageSection}
+            ### 📈 Code Analysis
+            
+            - **Files changed**: ${fileCount} TypeScript/JavaScript files
+            - **Test files**: ${testFiles}
+            ${warnings.length > 0 ? '\n### ⚠️ Warnings\n\n' + warnings.join('\n') : ''}
+            ${suggestions.length > 0 ? '\n### 💡 Suggestions\n\n' + suggestions.join('\n') : ''}
+            
+            ### ${allPassed ? '✅ Status: Ready for Review' : '⚠️ Status: Needs Attention'}
+            
+            ${allPassed 
+              ? '**All automated checks passed!** This PR is ready for human review.' 
+              : '**Some checks need attention.** Please review the issues above and the detailed logs.'}
+            
+            ---
+            <details>
+            <summary>📚 Review Guidelines</summary>
+            
+            - Ensure all tests pass locally: \`npm run validate\`
+            - Check accessibility compliance (WCAG 2.2 AA)
+            - Verify responsive design (mobile + desktop)
+            - Review security implications
+            - Confirm code follows project conventions
+            </details>
+            
+            *Automated by GitHub Actions • [View workflow run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

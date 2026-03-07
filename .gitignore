@@ -31,3 +31,6 @@ coverage
 .env
 .env.local
 .env.*.local
+
+# MCP settings with tokens (keep template only)
+.kiro/settings/mcp.json

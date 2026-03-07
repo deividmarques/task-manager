@@ -144,6 +144,35 @@ npm run coverage       # Gera relatório de cobertura
 - Recuperação de dados corrompidos
 - Mensagens de erro claras e acionáveis
 
+## 🤖 CI/CD e Automação
+
+### GitHub Actions
+
+O projeto inclui workflows automatizados para análise de PRs:
+
+- **PR Validation**: Roda lint, tests e build automaticamente
+- **AI Code Review**: Análise inteligente com feedback automático
+- **Coverage Reports**: Relatórios de cobertura de testes
+
+```bash
+# Ver status dos checks
+gh pr checks
+
+# Ver detalhes do workflow
+gh run view
+```
+
+Veja [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) para configuração completa.
+
+### Validação Local
+
+Antes de fazer push, valide localmente:
+
+```bash
+npm run pr:check     # Validação rápida
+npm run validate     # Validação completa
+```
+
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas! Por favor:
@@ -153,6 +182,8 @@ Contribuições são bem-vindas! Por favor:
 3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
 4. Push para a branch (`git push origin feature/MinhaFeature`)
 5. Abra um Pull Request
+
+**Nota:** Os workflows do GitHub Actions rodarão automaticamente para validar sua PR.
 
 ## 📄 Licença
 

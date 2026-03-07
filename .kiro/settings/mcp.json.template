@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "github-repo-mcp": {
+      "command": "npx",
+      "args": ["-y", "github-repo-mcp"],
+      "env": {
+        "GITHUB_TOKEN": ""
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

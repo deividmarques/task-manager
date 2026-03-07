@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "name": "Analyze Pull Request (DISABLED)",
+  "description": "TEMPORARIAMENTE DESABILITADO - Analyzes the current PR by reading changed files via GitHub MCP and provides code review feedback on quality, security, accessibility, and best practices",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Analyze the current Pull Request:\n\n1. Use 'gh pr view --json files' to get the list of changed files in the current PR\n2. For each changed file, use the GitHub MCP server to read its content from the repository\n3. Analyze the code for:\n   - Code quality issues\n   - Security vulnerabilities\n   - Accessibility problems (WCAG 2.2 AA)\n   - Best practices violations\n   - Performance concerns\n   - Test coverage gaps\n4. Provide a structured review with:\n   - Summary of changes\n   - Issues found (categorized by severity: critical, high, medium, low)\n   - Suggestions for improvement\n   - Positive feedback on good practices\n5. Format the output as a clear, actionable code review\n\nFocus on being constructive and specific in your feedback."
+  }
+}

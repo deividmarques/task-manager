@@ -1,15 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { validateTitle, validateDescription, validateTaskFormData } from '../validation';
 
+const ERROR_MESSAGES = {
+  TITLE_REQUIRED: 'Title is required',
+  TITLE_TOO_LONG: 'Title must be 200 characters or less',
+  DESCRIPTION_TOO_LONG: 'Description must be 1000 characters or less',
+} as const;
+
 describe('validateTitle', () => {
   it('returns error for empty title', () => {
-    expect(validateTitle('')).toBe('Title is required');
-    expect(validateTitle('   ')).toBe('Title is required');
+    expect(validateTitle('')).toBe(ERROR_MESSAGES.TITLE_REQUIRED);
+    expect(validateTitle('   ')).toBe(ERROR_MESSAGES.TITLE_REQUIRED);
   });
 
   it('returns error for title exceeding 200 characters', () => {
     const longTitle = 'a'.repeat(201);
-    expect(validateTitle(longTitle)).toBe('Title must be 200 characters or less');
+    expect(validateTitle(longTitle)).toBe(ERROR_MESSAGES.TITLE_TOO_LONG);
   });
 
   it('returns null for valid title', () => {
@@ -21,7 +27,7 @@ describe('validateTitle', () => {
 describe('validateDescription', () => {
   it('returns error for description exceeding 1000 characters', () => {
     const longDescription = 'a'.repeat(1001);
-    expect(validateDescription(longDescription)).toBe('Description must be 1000 characters or less');
+    expect(validateDescription(longDescription)).toBe(ERROR_MESSAGES.DESCRIPTION_TOO_LONG);
   });
 
   it('returns null for valid description', () => {
@@ -38,8 +44,8 @@ describe('validateTaskFormData', () => {
       description: 'a'.repeat(1001),
     });
 
-    expect(errors.title).toBe('Title is required');
-    expect(errors.description).toBe('Description must be 1000 characters or less');
+    expect(errors.title).toBe(ERROR_MESSAGES.TITLE_REQUIRED);
+    expect(errors.description).toBe(ERROR_MESSAGES.DESCRIPTION_TOO_LONG);
   });
 
   it('returns empty object for valid data', () => {

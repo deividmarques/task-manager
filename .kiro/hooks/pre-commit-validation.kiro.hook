@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Pre-commit Validation",
   "description": "Runs lint, tests and build before allowing commits to ensure code quality and prevent CI/CD failures",
   "version": "1",
@@ -13,3 +13,6 @@
   "workspaceFolderName": "kiro",
   "shortName": "pre-commit-validation"
 }
+
+// TEMPORARIAMENTE DESABILITADO - Para economizar tokens
+// Para reativar: mude "enabled": false para "enabled": true

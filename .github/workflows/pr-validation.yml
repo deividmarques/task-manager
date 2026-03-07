@@ -1,0 +1,77 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run linter
+        run: npm run lint
+        
+      - name: Run tests
+        run: npm run test
+        
+      - name: Run build
+        run: npm run build
+        
+      - name: Generate coverage
+        run: npm run coverage
+        continue-on-error: true
+        
+      - name: Comment PR with results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            // Get job status
+            const lintStatus = '${{ steps.lint.outcome }}' === 'success' ? '✅' : '❌';
+            const testStatus = '${{ steps.test.outcome }}' === 'success' ? '✅' : '❌';
+            const buildStatus = '${{ steps.build.outcome }}' === 'success' ? '✅' : '❌';
+            
+            const comment = `## 🤖 Automated PR Validation
+            
+            | Check | Status |
+            |-------|--------|
+            | Lint | ${lintStatus} |
+            | Tests | ${testStatus} |
+            | Build | ${buildStatus} |
+            
+            ${lintStatus === '✅' && testStatus === '✅' && buildStatus === '✅' 
+              ? '✅ **All checks passed!** This PR is ready for review.' 
+              : '⚠️ **Some checks failed.** Please review the logs above.'}
+            
+            ---
+            *Automated validation by GitHub Actions*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
