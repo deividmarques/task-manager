@@ -1,319 +1,319 @@
-name: Advanced PR Analysis
+# name: Advanced PR Analysis
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+# on:
+#   pull_request:
+#     types: [opened, synchronize]
 
-permissions:
-  contents: read
-  pull-requests: write
-  checks: write
+# permissions:
+#   contents: read
+#   pull-requests: write
+#   checks: write
 
-jobs:
-  advanced-analysis:
-    name: Advanced Code Analysis
-    runs-on: ubuntu-latest
+# jobs:
+#   advanced-analysis:
+#     name: Advanced Code Analysis
+#     runs-on: ubuntu-latest
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
           
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '18'
+#           cache: 'npm'
           
-      - name: Install dependencies
-        run: npm ci
+#       - name: Install dependencies
+#         run: npm ci
         
-      # ============================================
-      # 1. BUNDLE SIZE ANALYSIS
-      # ============================================
-      - name: Analyze bundle size
-        id: bundle
-        run: |
-          echo "Analyzing bundle size..."
-          npm run build
+#       # ============================================
+#       # 1. BUNDLE SIZE ANALYSIS
+#       # ============================================
+#       - name: Analyze bundle size
+#         id: bundle
+#         run: |
+#           echo "Analyzing bundle size..."
+#           npm run build
           
-          # Get bundle sizes
-          BUNDLE_SIZE=$(du -sh dist | cut -f1)
-          JS_SIZE=$(find dist/assets -name "*.js" -exec du -ch {} + | grep total | cut -f1)
-          CSS_SIZE=$(find dist/assets -name "*.css" -exec du -ch {} + | grep total | cut -f1)
+#           # Get bundle sizes
+#           BUNDLE_SIZE=$(du -sh dist | cut -f1)
+#           JS_SIZE=$(find dist/assets -name "*.js" -exec du -ch {} + | grep total | cut -f1)
+#           CSS_SIZE=$(find dist/assets -name "*.css" -exec du -ch {} + | grep total | cut -f1)
           
-          echo "bundle_size=$BUNDLE_SIZE" >> $GITHUB_OUTPUT
-          echo "js_size=$JS_SIZE" >> $GITHUB_OUTPUT
-          echo "css_size=$CSS_SIZE" >> $GITHUB_OUTPUT
+#           echo "bundle_size=$BUNDLE_SIZE" >> $GITHUB_OUTPUT
+#           echo "js_size=$JS_SIZE" >> $GITHUB_OUTPUT
+#           echo "css_size=$CSS_SIZE" >> $GITHUB_OUTPUT
           
-          # Check if bundle grew significantly (>10%)
-          if [ -f "dist/stats.json" ]; then
-            echo "bundle_warning=false" >> $GITHUB_OUTPUT
-          else
-            echo "bundle_warning=false" >> $GITHUB_OUTPUT
-          fi
+#           # Check if bundle grew significantly (>10%)
+#           if [ -f "dist/stats.json" ]; then
+#             echo "bundle_warning=false" >> $GITHUB_OUTPUT
+#           else
+#             echo "bundle_warning=false" >> $GITHUB_OUTPUT
+#           fi
           
-      # ============================================
-      # 2. CODE COMPLEXITY ANALYSIS
-      # ============================================
-      - name: Analyze code complexity
-        id: complexity
-        run: |
-          echo "Analyzing code complexity..."
+#       # ============================================
+#       # 2. CODE COMPLEXITY ANALYSIS
+#       # ============================================
+#       - name: Analyze code complexity
+#         id: complexity
+#         run: |
+#           echo "Analyzing code complexity..."
           
-          # Count lines of code
-          SRC_LINES=$(find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | tail -1 | awk '{print $1}')
-          TEST_LINES=$(find src -name "*.test.ts" -o -name "*.test.tsx" | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' || echo "0")
+#           # Count lines of code
+#           SRC_LINES=$(find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | tail -1 | awk '{print $1}')
+#           TEST_LINES=$(find src -name "*.test.ts" -o -name "*.test.tsx" | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' || echo "0")
           
-          echo "src_lines=$SRC_LINES" >> $GITHUB_OUTPUT
-          echo "test_lines=$TEST_LINES" >> $GITHUB_OUTPUT
+#           echo "src_lines=$SRC_LINES" >> $GITHUB_OUTPUT
+#           echo "test_lines=$TEST_LINES" >> $GITHUB_OUTPUT
           
-          # Calculate test ratio
-          if [ "$SRC_LINES" -gt 0 ]; then
-            TEST_RATIO=$(echo "scale=2; $TEST_LINES / $SRC_LINES * 100" | bc)
-            echo "test_ratio=$TEST_RATIO%" >> $GITHUB_OUTPUT
-          else
-            echo "test_ratio=0%" >> $GITHUB_OUTPUT
-          fi
+#           # Calculate test ratio
+#           if [ "$SRC_LINES" -gt 0 ]; then
+#             TEST_RATIO=$(echo "scale=2; $TEST_LINES / $SRC_LINES * 100" | bc)
+#             echo "test_ratio=$TEST_RATIO%" >> $GITHUB_OUTPUT
+#           else
+#             echo "test_ratio=0%" >> $GITHUB_OUTPUT
+#           fi
           
-      # ============================================
-      # 3. DEPENDENCY ANALYSIS
-      # ============================================
-      - name: Check for new dependencies
-        id: deps
-        run: |
-          echo "Checking dependencies..."
+#       # ============================================
+#       # 3. DEPENDENCY ANALYSIS
+#       # ============================================
+#       - name: Check for new dependencies
+#         id: deps
+#         run: |
+#           echo "Checking dependencies..."
           
-          # Check if package.json changed
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "package.json"; then
-            NEW_DEPS=$(git diff origin/${{ github.base_ref }}...HEAD package.json | grep "^+" | grep -c "\"" || echo "0")
-            echo "new_deps=$NEW_DEPS" >> $GITHUB_OUTPUT
-            echo "deps_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "new_deps=0" >> $GITHUB_OUTPUT
-            echo "deps_changed=false" >> $GITHUB_OUTPUT
-          fi
+#           # Check if package.json changed
+#           if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "package.json"; then
+#             NEW_DEPS=$(git diff origin/${{ github.base_ref }}...HEAD package.json | grep "^+" | grep -c "\"" || echo "0")
+#             echo "new_deps=$NEW_DEPS" >> $GITHUB_OUTPUT
+#             echo "deps_changed=true" >> $GITHUB_OUTPUT
+#           else
+#             echo "new_deps=0" >> $GITHUB_OUTPUT
+#             echo "deps_changed=false" >> $GITHUB_OUTPUT
+#           fi
           
-      # ============================================
-      # 4. ACCESSIBILITY DEEP SCAN
-      # ============================================
-      - name: Accessibility analysis
-        id: a11y
-        run: |
-          echo "Analyzing accessibility..."
+#       # ============================================
+#       # 4. ACCESSIBILITY DEEP SCAN
+#       # ============================================
+#       - name: Accessibility analysis
+#         id: a11y
+#         run: |
+#           echo "Analyzing accessibility..."
           
-          # Check for ARIA attributes
-          ARIA_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "aria-" || echo "0")
+#           # Check for ARIA attributes
+#           ARIA_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "aria-" || echo "0")
           
-          # Check for role attributes
-          ROLE_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "role=" || echo "0")
+#           # Check for role attributes
+#           ROLE_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "role=" || echo "0")
           
-          # Check for alt attributes
-          ALT_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "alt=" || echo "0")
+#           # Check for alt attributes
+#           ALT_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "alt=" || echo "0")
           
-          echo "aria_count=$ARIA_COUNT" >> $GITHUB_OUTPUT
-          echo "role_count=$ROLE_COUNT" >> $GITHUB_OUTPUT
-          echo "alt_count=$ALT_COUNT" >> $GITHUB_OUTPUT
+#           echo "aria_count=$ARIA_COUNT" >> $GITHUB_OUTPUT
+#           echo "role_count=$ROLE_COUNT" >> $GITHUB_OUTPUT
+#           echo "alt_count=$ALT_COUNT" >> $GITHUB_OUTPUT
           
-          # Check for accessibility issues
-          A11Y_ISSUES=$(git diff origin/${{ github.base_ref }}...HEAD | grep -E "onClick.*div|onClick.*span" | wc -l || echo "0")
-          echo "a11y_issues=$A11Y_ISSUES" >> $GITHUB_OUTPUT
+#           # Check for accessibility issues
+#           A11Y_ISSUES=$(git diff origin/${{ github.base_ref }}...HEAD | grep -E "onClick.*div|onClick.*span" | wc -l || echo "0")
+#           echo "a11y_issues=$A11Y_ISSUES" >> $GITHUB_OUTPUT
           
-      # ============================================
-      # 5. SECURITY SCAN
-      # ============================================
-      - name: Security analysis
-        id: security
-        run: |
-          echo "Running security checks..."
+#       # ============================================
+#       # 5. SECURITY SCAN
+#       # ============================================
+#       - name: Security analysis
+#         id: security
+#         run: |
+#           echo "Running security checks..."
           
-          # Check for dangerous patterns
-          EVAL_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "eval(" || echo "0")
-          INNERHTML_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "innerHTML" || echo "0")
-          DANGEROUSLY_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "dangerouslySetInnerHTML" || echo "0")
+#           # Check for dangerous patterns
+#           EVAL_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "eval(" || echo "0")
+#           INNERHTML_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "innerHTML" || echo "0")
+#           DANGEROUSLY_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "dangerouslySetInnerHTML" || echo "0")
           
-          echo "eval_count=$EVAL_COUNT" >> $GITHUB_OUTPUT
-          echo "innerhtml_count=$INNERHTML_COUNT" >> $GITHUB_OUTPUT
-          echo "dangerously_count=$DANGEROUSLY_COUNT" >> $GITHUB_OUTPUT
+#           echo "eval_count=$EVAL_COUNT" >> $GITHUB_OUTPUT
+#           echo "innerhtml_count=$INNERHTML_COUNT" >> $GITHUB_OUTPUT
+#           echo "dangerously_count=$DANGEROUSLY_COUNT" >> $GITHUB_OUTPUT
           
-          # Run npm audit
-          npm audit --json > audit.json || true
-          VULNERABILITIES=$(cat audit.json | jq '.metadata.vulnerabilities.total' || echo "0")
-          echo "vulnerabilities=$VULNERABILITIES" >> $GITHUB_OUTPUT
+#           # Run npm audit
+#           npm audit --json > audit.json || true
+#           VULNERABILITIES=$(cat audit.json | jq '.metadata.vulnerabilities.total' || echo "0")
+#           echo "vulnerabilities=$VULNERABILITIES" >> $GITHUB_OUTPUT
           
-      # ============================================
-      # 6. PERFORMANCE METRICS
-      # ============================================
-      - name: Performance analysis
-        id: performance
-        run: |
-          echo "Analyzing performance..."
+#       # ============================================
+#       # 6. PERFORMANCE METRICS
+#       # ============================================
+#       - name: Performance analysis
+#         id: performance
+#         run: |
+#           echo "Analyzing performance..."
           
-          # Check for performance anti-patterns
-          USEEFFECT_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "useEffect" || echo "0")
-          USEMEMO_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "useMemo" || echo "0")
-          USECALLBACK_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "useCallback" || echo "0")
+#           # Check for performance anti-patterns
+#           USEEFFECT_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "useEffect" || echo "0")
+#           USEMEMO_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "useMemo" || echo "0")
+#           USECALLBACK_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "useCallback" || echo "0")
           
-          echo "useeffect_count=$USEEFFECT_COUNT" >> $GITHUB_OUTPUT
-          echo "usememo_count=$USEMEMO_COUNT" >> $GITHUB_OUTPUT
-          echo "usecallback_count=$USECALLBACK_COUNT" >> $GITHUB_OUTPUT
+#           echo "useeffect_count=$USEEFFECT_COUNT" >> $GITHUB_OUTPUT
+#           echo "usememo_count=$USEMEMO_COUNT" >> $GITHUB_OUTPUT
+#           echo "usecallback_count=$USECALLBACK_COUNT" >> $GITHUB_OUTPUT
           
-          # Check for large files
-          LARGE_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | xargs wc -l 2>/dev/null | awk '$1 > 300 {print $2}' | wc -l || echo "0")
-          echo "large_files=$LARGE_FILES" >> $GITHUB_OUTPUT
+#           # Check for large files
+#           LARGE_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | xargs wc -l 2>/dev/null | awk '$1 > 300 {print $2}' | wc -l || echo "0")
+#           echo "large_files=$LARGE_FILES" >> $GITHUB_OUTPUT
           
-      # ============================================
-      # 7. CODE STYLE & PATTERNS
-      # ============================================
-      - name: Code style analysis
-        id: style
-        run: |
-          echo "Analyzing code style..."
+#       # ============================================
+#       # 7. CODE STYLE & PATTERNS
+#       # ============================================
+#       - name: Code style analysis
+#         id: style
+#         run: |
+#           echo "Analyzing code style..."
           
-          # Check for TypeScript any usage
-          ANY_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c ": any" || echo "0")
+#           # Check for TypeScript any usage
+#           ANY_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c ": any" || echo "0")
           
-          # Check for proper typing
-          INTERFACE_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "interface " || echo "0")
-          TYPE_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "type " || echo "0")
+#           # Check for proper typing
+#           INTERFACE_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "interface " || echo "0")
+#           TYPE_COUNT=$(git diff origin/${{ github.base_ref }}...HEAD | grep -c "type " || echo "0")
           
-          echo "any_count=$ANY_COUNT" >> $GITHUB_OUTPUT
-          echo "interface_count=$INTERFACE_COUNT" >> $GITHUB_OUTPUT
-          echo "type_count=$TYPE_COUNT" >> $GITHUB_OUTPUT
+#           echo "any_count=$ANY_COUNT" >> $GITHUB_OUTPUT
+#           echo "interface_count=$INTERFACE_COUNT" >> $GITHUB_OUTPUT
+#           echo "type_count=$TYPE_COUNT" >> $GITHUB_OUTPUT
           
-      # ============================================
-      # 8. GENERATE COMPREHENSIVE REPORT
-      # ============================================
-      - name: Generate analysis report
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const bundleSize = '${{ steps.bundle.outputs.bundle_size }}';
-            const jsSize = '${{ steps.bundle.outputs.js_size }}';
-            const cssSize = '${{ steps.bundle.outputs.css_size }}';
+#       # ============================================
+#       # 8. GENERATE COMPREHENSIVE REPORT
+#       # ============================================
+#       - name: Generate analysis report
+#         uses: actions/github-script@v7
+#         with:
+#           script: |
+#             const bundleSize = '${{ steps.bundle.outputs.bundle_size }}';
+#             const jsSize = '${{ steps.bundle.outputs.js_size }}';
+#             const cssSize = '${{ steps.bundle.outputs.css_size }}';
             
-            const srcLines = '${{ steps.complexity.outputs.src_lines }}';
-            const testLines = '${{ steps.complexity.outputs.test_lines }}';
-            const testRatio = '${{ steps.complexity.outputs.test_ratio }}';
+#             const srcLines = '${{ steps.complexity.outputs.src_lines }}';
+#             const testLines = '${{ steps.complexity.outputs.test_lines }}';
+#             const testRatio = '${{ steps.complexity.outputs.test_ratio }}';
             
-            const newDeps = '${{ steps.deps.outputs.new_deps }}';
-            const depsChanged = '${{ steps.deps.outputs.deps_changed }}';
+#             const newDeps = '${{ steps.deps.outputs.new_deps }}';
+#             const depsChanged = '${{ steps.deps.outputs.deps_changed }}';
             
-            const ariaCount = '${{ steps.a11y.outputs.aria_count }}';
-            const roleCount = '${{ steps.a11y.outputs.role_count }}';
-            const a11yIssues = '${{ steps.a11y.outputs.a11y_issues }}';
+#             const ariaCount = '${{ steps.a11y.outputs.aria_count }}';
+#             const roleCount = '${{ steps.a11y.outputs.role_count }}';
+#             const a11yIssues = '${{ steps.a11y.outputs.a11y_issues }}';
             
-            const evalCount = '${{ steps.security.outputs.eval_count }}';
-            const innerHTMLCount = '${{ steps.security.outputs.innerhtml_count }}';
-            const vulnerabilities = '${{ steps.security.outputs.vulnerabilities }}';
+#             const evalCount = '${{ steps.security.outputs.eval_count }}';
+#             const innerHTMLCount = '${{ steps.security.outputs.innerhtml_count }}';
+#             const vulnerabilities = '${{ steps.security.outputs.vulnerabilities }}';
             
-            const useEffectCount = '${{ steps.performance.outputs.useeffect_count }}';
-            const useMemoCount = '${{ steps.performance.outputs.usememo_count }}';
-            const largeFiles = '${{ steps.performance.outputs.large_files }}';
+#             const useEffectCount = '${{ steps.performance.outputs.useeffect_count }}';
+#             const useMemoCount = '${{ steps.performance.outputs.usememo_count }}';
+#             const largeFiles = '${{ steps.performance.outputs.large_files }}';
             
-            const anyCount = '${{ steps.style.outputs.any_count }}';
-            const interfaceCount = '${{ steps.style.outputs.interface_count }}';
+#             const anyCount = '${{ steps.style.outputs.any_count }}';
+#             const interfaceCount = '${{ steps.style.outputs.interface_count }}';
             
-            // Build warnings array
-            let warnings = [];
-            let recommendations = [];
-            let highlights = [];
+#             // Build warnings array
+#             let warnings = [];
+#             let recommendations = [];
+#             let highlights = [];
             
-            // Security warnings
-            if (evalCount > 0) warnings.push(`🚨 **Critical**: Found ${evalCount} usage(s) of \`eval()\` - major security risk`);
-            if (innerHTMLCount > 0) warnings.push(`⚠️ Found ${innerHTMLCount} usage(s) of \`innerHTML\` - potential XSS risk`);
-            if (vulnerabilities > 0) warnings.push(`⚠️ Found ${vulnerabilities} dependency vulnerabilities - run \`npm audit fix\``);
+#             // Security warnings
+#             if (evalCount > 0) warnings.push(`🚨 **Critical**: Found ${evalCount} usage(s) of \`eval()\` - major security risk`);
+#             if (innerHTMLCount > 0) warnings.push(`⚠️ Found ${innerHTMLCount} usage(s) of \`innerHTML\` - potential XSS risk`);
+#             if (vulnerabilities > 0) warnings.push(`⚠️ Found ${vulnerabilities} dependency vulnerabilities - run \`npm audit fix\``);
             
-            // Accessibility warnings
-            if (a11yIssues > 0) warnings.push(`♿ Found ${a11yIssues} potential accessibility issue(s) - onClick on non-interactive elements`);
+#             // Accessibility warnings
+#             if (a11yIssues > 0) warnings.push(`♿ Found ${a11yIssues} potential accessibility issue(s) - onClick on non-interactive elements`);
             
-            // Performance warnings
-            if (largeFiles > 0) warnings.push(`📦 Found ${largeFiles} file(s) over 300 lines - consider splitting`);
+#             // Performance warnings
+#             if (largeFiles > 0) warnings.push(`📦 Found ${largeFiles} file(s) over 300 lines - consider splitting`);
             
-            // Code quality warnings
-            if (anyCount > 0) warnings.push(`📝 Found ${anyCount} usage(s) of \`any\` type - consider proper typing`);
+#             // Code quality warnings
+#             if (anyCount > 0) warnings.push(`📝 Found ${anyCount} usage(s) of \`any\` type - consider proper typing`);
             
-            // Recommendations
-            if (testRatio < 50) recommendations.push(`🧪 Test coverage is ${testRatio} - aim for >50%`);
-            if (useMemoCount === '0' && useEffectCount > 3) recommendations.push(`⚡ Consider using \`useMemo\` for expensive computations`);
-            if (depsChanged === 'true') recommendations.push(`📦 Dependencies changed - review bundle size impact`);
+#             // Recommendations
+#             if (testRatio < 50) recommendations.push(`🧪 Test coverage is ${testRatio} - aim for >50%`);
+#             if (useMemoCount === '0' && useEffectCount > 3) recommendations.push(`⚡ Consider using \`useMemo\` for expensive computations`);
+#             if (depsChanged === 'true') recommendations.push(`📦 Dependencies changed - review bundle size impact`);
             
-            // Highlights
-            if (ariaCount > 0) highlights.push(`✅ Added ${ariaCount} ARIA attributes for accessibility`);
-            if (useMemoCount > 0) highlights.push(`⚡ Using ${useMemoCount} \`useMemo\` for performance optimization`);
-            if (interfaceCount > 0) highlights.push(`📝 Added ${interfaceCount} TypeScript interfaces for type safety`);
+#             // Highlights
+#             if (ariaCount > 0) highlights.push(`✅ Added ${ariaCount} ARIA attributes for accessibility`);
+#             if (useMemoCount > 0) highlights.push(`⚡ Using ${useMemoCount} \`useMemo\` for performance optimization`);
+#             if (interfaceCount > 0) highlights.push(`📝 Added ${interfaceCount} TypeScript interfaces for type safety`);
             
-            const comment = `## 🔬 Advanced PR Analysis
+#             const comment = `## 🔬 Advanced PR Analysis
             
-            ### 📊 Code Metrics
+#             ### 📊 Code Metrics
             
-            | Metric | Value |
-            |--------|-------|
-            | **Bundle Size** | ${bundleSize} (JS: ${jsSize}, CSS: ${cssSize}) |
-            | **Source Lines** | ${srcLines} |
-            | **Test Lines** | ${testLines} (${testRatio} ratio) |
-            | **New Dependencies** | ${newDeps} |
+#             | Metric | Value |
+#             |--------|-------|
+#             | **Bundle Size** | ${bundleSize} (JS: ${jsSize}, CSS: ${cssSize}) |
+#             | **Source Lines** | ${srcLines} |
+#             | **Test Lines** | ${testLines} (${testRatio} ratio) |
+#             | **New Dependencies** | ${newDeps} |
             
-            ### 🔒 Security Score
+#             ### 🔒 Security Score
             
-            | Check | Count |
-            |-------|-------|
-            | \`eval()\` usage | ${evalCount} ${evalCount > 0 ? '🚨' : '✅'} |
-            | \`innerHTML\` usage | ${innerHTMLCount} ${innerHTMLCount > 0 ? '⚠️' : '✅'} |
-            | Vulnerabilities | ${vulnerabilities} ${vulnerabilities > 0 ? '⚠️' : '✅'} |
+#             | Check | Count |
+#             |-------|-------|
+#             | \`eval()\` usage | ${evalCount} ${evalCount > 0 ? '🚨' : '✅'} |
+#             | \`innerHTML\` usage | ${innerHTMLCount} ${innerHTMLCount > 0 ? '⚠️' : '✅'} |
+#             | Vulnerabilities | ${vulnerabilities} ${vulnerabilities > 0 ? '⚠️' : '✅'} |
             
-            ### ♿ Accessibility Score
+#             ### ♿ Accessibility Score
             
-            | Check | Count |
-            |-------|-------|
-            | ARIA attributes | ${ariaCount} |
-            | Role attributes | ${roleCount} |
-            | Potential issues | ${a11yIssues} ${a11yIssues > 0 ? '⚠️' : '✅'} |
+#             | Check | Count |
+#             |-------|-------|
+#             | ARIA attributes | ${ariaCount} |
+#             | Role attributes | ${roleCount} |
+#             | Potential issues | ${a11yIssues} ${a11yIssues > 0 ? '⚠️' : '✅'} |
             
-            ### ⚡ Performance Indicators
+#             ### ⚡ Performance Indicators
             
-            | Hook | Usage |
-            |------|-------|
-            | \`useEffect\` | ${useEffectCount} |
-            | \`useMemo\` | ${useMemoCount} |
-            | Large files (>300 lines) | ${largeFiles} ${largeFiles > 0 ? '⚠️' : '✅'} |
+#             | Hook | Usage |
+#             |------|-------|
+#             | \`useEffect\` | ${useEffectCount} |
+#             | \`useMemo\` | ${useMemoCount} |
+#             | Large files (>300 lines) | ${largeFiles} ${largeFiles > 0 ? '⚠️' : '✅'} |
             
-            ### 📝 Code Quality
+#             ### 📝 Code Quality
             
-            | Metric | Count |
-            |--------|-------|
-            | \`any\` type usage | ${anyCount} ${anyCount > 0 ? '⚠️' : '✅'} |
-            | Interfaces defined | ${interfaceCount} |
+#             | Metric | Count |
+#             |--------|-------|
+#             | \`any\` type usage | ${anyCount} ${anyCount > 0 ? '⚠️' : '✅'} |
+#             | Interfaces defined | ${interfaceCount} |
             
-            ${warnings.length > 0 ? `### ⚠️ Warnings\n\n${warnings.map(w => `- ${w}`).join('\n')}\n` : ''}
-            ${recommendations.length > 0 ? `### 💡 Recommendations\n\n${recommendations.map(r => `- ${r}`).join('\n')}\n` : ''}
-            ${highlights.length > 0 ? `### ✨ Highlights\n\n${highlights.map(h => `- ${h}`).join('\n')}\n` : ''}
+#             ${warnings.length > 0 ? `### ⚠️ Warnings\n\n${warnings.map(w => `- ${w}`).join('\n')}\n` : ''}
+#             ${recommendations.length > 0 ? `### 💡 Recommendations\n\n${recommendations.map(r => `- ${r}`).join('\n')}\n` : ''}
+#             ${highlights.length > 0 ? `### ✨ Highlights\n\n${highlights.map(h => `- ${h}`).join('\n')}\n` : ''}
             
-            ### 🎯 Overall Assessment
+#             ### 🎯 Overall Assessment
             
-            ${warnings.length === 0 && recommendations.length <= 2 
-              ? '✅ **Excellent!** This PR meets high quality standards.' 
-              : warnings.length > 0 
-                ? '⚠️ **Needs attention** - Please address the warnings above.' 
-                : '👍 **Good** - Minor improvements suggested.'}
+#             ${warnings.length === 0 && recommendations.length <= 2 
+#               ? '✅ **Excellent!** This PR meets high quality standards.' 
+#               : warnings.length > 0 
+#                 ? '⚠️ **Needs attention** - Please address the warnings above.' 
+#                 : '👍 **Good** - Minor improvements suggested.'}
             
-            ---
-            <details>
-            <summary>📚 Quality Guidelines</summary>
+#             ---
+#             <details>
+#             <summary>📚 Quality Guidelines</summary>
             
-            - **Security**: No \`eval()\`, minimize \`innerHTML\`, keep dependencies updated
-            - **Accessibility**: Use ARIA attributes, semantic HTML, keyboard navigation
-            - **Performance**: Use \`useMemo\`/\`useCallback\`, keep files under 300 lines
-            - **Type Safety**: Avoid \`any\`, use interfaces/types
-            - **Testing**: Maintain >50% test coverage
-            </details>
+#             - **Security**: No \`eval()\`, minimize \`innerHTML\`, keep dependencies updated
+#             - **Accessibility**: Use ARIA attributes, semantic HTML, keyboard navigation
+#             - **Performance**: Use \`useMemo\`/\`useCallback\`, keep files under 300 lines
+#             - **Type Safety**: Avoid \`any\`, use interfaces/types
+#             - **Testing**: Maintain >50% test coverage
+#             </details>
             
-            *Advanced analysis by GitHub Actions • [View details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
+#             *Advanced analysis by GitHub Actions • [View details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
             
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+#             github.rest.issues.createComment({
+#               issue_number: context.issue.number,
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               body: comment
+#             });
